@@ -21,7 +21,7 @@ def main(params:dict=None, n=1000, since=2016, charMax=10000, repoCounter=None):
     def doCommits(repo:Url):
         counter = Counter()
         with TemporaryDirectory() as fp:
-            shell(f"git clone {repo} {fp} --shallow-since={since} --shallow-submodules")
+            shell(f"git clone {repo} {fp} --shallow-since={since-1} --shallow-submodules")
             commitHashes = shell(f"git -C {fp} log --pretty=format:%H").split()[:-1]
             assert len(commitHashes) != 0
             for commitHash in commitHashes:
