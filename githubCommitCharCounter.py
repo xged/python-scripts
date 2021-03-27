@@ -13,15 +13,15 @@ RepoCounter = dict[Counter[Char], set[Url]]  # dict=SimpleNamespace
 
 def shell(s:str): return subprocess.run(s, capture_output=True, check=True, shell=True, text=True).stdout
 
-def main(params:dict=None, n=1000, commitLimit=10000, charLimit=10000, repoCounter=None):
+def main(params:dict=None, n=1000, since=2016, charMax=10000, repoCounter=None):
+    assert n <= 1000
     if params is None: params = {'q':'stars:>=0'}
     if repoCounter is None: repoCounter = SimpleNamespace(counter=Counter(), repos=set())
-    assert n <= 1000
 
     def doCommits(repo:Url):
         counter = Counter()
         with TemporaryDirectory() as fp:
-            shell(f"git clone {repo} {fp} --depth {commitLimit+1} --shallow-submodules")
+            shell(f"git clone {repo} {fp} --shallow-since={since} --shallow-submodules")
             commitHashes = shell(f"git -C {fp} log --pretty=format:%H").split()[:-1]
             assert len(commitHashes) != 0
             for commitHash in commitHashes:
@@ -29,7 +29,7 @@ def main(params:dict=None, n=1000, commitLimit=10000, charLimit=10000, repoCount
                     print("+", end="")
                     diffPatch = shell(f"git -C {fp} diff {commitHash}~ {commitHash} --word-diff=porcelain --word-diff-regex=. --unified=0")
                     for diff in diffPatch.split("diff --git a/")[1:]:
-                        if len(diff)<=charLimit:
+                        if len(diff)<=charMax:
                             addedLines = regex.findall(r"\n\+(?!\+\+ [ab/])(.+)", diff)
                             counter += Counter(''.join(addedLines))
                         else:
