@@ -6,7 +6,6 @@ from types import SimpleNamespace
 import regex
 import requests
 from icecream import ic
-# from traceback_with_variables import activate_by_import
 
 Char = str
 Url = str  # GitHub repos
@@ -42,12 +41,8 @@ def main(params:dict=None, n=1000, commitLimit=10000, charLimit=10000, repoCount
         repoCounter.counter += counter
         repoCounter.repos.add(repo)
 
-    if n>=100:
-        perPage = 100
-        npages = n//100
-    else:
-        perPage = n
-        npages = 1
+    perPage = min(100, n)
+    npages = n//100 or 1
     for page in range(1, npages+1):
         rjson = requests.get('https://api.github.com/search/repositories', {'per_page':perPage,'page':page,**params}).json()
         for item in rjson['items']:
