@@ -13,7 +13,7 @@ RepoCounter = dict[Counter[Char], set[Url]]  # dict=SimpleNamespace
 
 def shell(s:str): return subprocess.run(s, capture_output=True, check=True, shell=True, text=True).stdout
 
-def main(params:dict=None, n=1000, since=2016, charMax=10000, repoCounter=None):
+def main(params:dict=None, n=1000, since=2016, commitCharMax=5000, repoCounter=None):
     assert n <= 1000
     if params is None: params = {'q':'stars:>=0'}
     if repoCounter is None: repoCounter = SimpleNamespace(counter=Counter(), repos=set())
@@ -29,7 +29,7 @@ def main(params:dict=None, n=1000, since=2016, charMax=10000, repoCounter=None):
                     print("+", end="")
                     diffPatch = shell(f"git -C {fp} diff {commitHash}~ {commitHash} --word-diff=porcelain --word-diff-regex=. --unified=0")
                     for diff in diffPatch.split("diff --git a/")[1:]:
-                        if len(diff)<=charMax:
+                        if len(diff)<=commitCharMax:
                             addedLines = regex.findall(r"\n\+(?!\+\+ [ab/])(.+)", diff)
                             counter += Counter(''.join(addedLines))
                         else:
