@@ -45,8 +45,8 @@ def main(params:dict=None, n=1000, since=2016, charMax=10000, repoCounter=None):
     npages = n//100 or 1
     for page in range(1, npages+1):
         rjson = requests.get('https://api.github.com/search/repositories', {'per_page':perPage,'page':page,**params}).json()
-        for repo in rjson['items']:
-            repo = repo['clone_url']
+        for repoItem in rjson['items']:
+            repo:Url = repoItem['clone_url']
             if repo not in repoCounter.repos:
                 print("\n", repo)
                 doCommits(repo)
