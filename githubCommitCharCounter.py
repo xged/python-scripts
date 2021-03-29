@@ -46,7 +46,7 @@ def doCommits(repos:{Url}, inLastYears=5, commitCharMax=5000, rc:RepoCounter=Non
                             rc.counter += Counter(''.join(addedLines))
                 except Exception as er: print(er)
     for c in list(rc.counter.keys()):
-        if c in (')',']','}','\n','\r') or not c.isascii(): del rc.counter[c]
+        if c in (')',']','}','\n','\r','\t') or not c.isascii(): del rc.counter[c]
     return rc
 
 def main(params:dict=None, n=1000, inLastYears=5, commitCharMax=5000, rc:RepoCounter=None)->RepoCounter:
