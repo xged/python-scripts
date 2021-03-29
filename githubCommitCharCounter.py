@@ -14,8 +14,7 @@ RepoCounter = dict[Counter[Char], {Url}]  # dict=SimpleNamespace
 
 def shell(s:str): return subprocess.run(s, capture_output=True, check=True, shell=True, text=True).stdout
 
-def getRepos(params:dict=None, n=1000)->{Url}:
-    if params is None: params = {'q':'stars:>0'}  # !? stars:>=0
+def getRepos(params={'q':'stars:>0'}, n=1000)->{Url}:  # !? stars:>=0
     assert n <= 1000
     perPage = min(100, n)
     npages = n//100 or 1
@@ -49,5 +48,5 @@ def doCommits(repos:{Url}, inLastYears=5, commitCharMax=5000, rc:RepoCounter=Non
         if c in (')',']','}','\n','\r','\t') or not c.isascii(): del rc.counter[c]
     return rc
 
-def main(params:dict=None, n=1000, inLastYears=5, commitCharMax=5000, rc:RepoCounter=None)->RepoCounter:
+def main(params={'q':'stars:>0'}, n=1000, inLastYears=5, commitCharMax=5000, rc:RepoCounter=None)->RepoCounter:
     return doCommits(getRepos(params, n), inLastYears, commitCharMax, rc)
