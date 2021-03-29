@@ -45,7 +45,7 @@ def doCommits(repos:{Url}, inLastYears=5, commitCharMax=5000, rc:RepoCounter=Non
                             addedLines = regex.findall(r"\n\+(?!\+\+ [ab/])(.+)", diff)
                             rc.counter += Counter(''.join(addedLines))
                 except Exception as er: print(er)
-    for c in list(rc.counter.keys()):
+    for c in set(rc.counter.keys()):
         if c in (')',']','}','\n','\r','\t') or not c.isascii(): del rc.counter[c]
     return rc
 
