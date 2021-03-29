@@ -39,7 +39,6 @@ def doCommits(repos:{Url}, inLastYears=5, commitCharMax=5000, rc:RepoCounter=Non
             assert len(commitHashes) != 0
             for commitHash in commitHashes:
                 try:
-                    print("+", end="")
                     diffPatch = shell(f"git -C {fp} diff {commitHash}~ {commitHash} --word-diff=porcelain --word-diff-regex=. --unified=0")
                     for diff in diffPatch.split("diff --git a/")[1:]:
                         if len(diff)<=commitCharMax:
