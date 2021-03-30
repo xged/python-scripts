@@ -9,13 +9,11 @@ import regex
 import requests
 from icecream import ic
 
-Char = str
-Url = str  # GitHub repos
-RepoCounter = dict[Counter[Char], {Url}]  # dict=SimpleNamespace
+RepoCounter = tuple[Counter['Char'], {'RepoUrl'}]  # tuple=SimpleNamespace
 
 def shell(s:str): return subprocess.run(s, capture_output=True, check=True, shell=True, text=True).stdout
 
-def getRepos(params={'q':'stars:>0'}, n=1000)->{Url}:  # !? stars:>=0
+def getRepos(params={'q':'stars:>0'}, n=1000)->{'RepoUrl'}:  # !? stars:>=0 # noqa
     assert n <= 1000
     perPage = min(100, n)
     npages = n//100 or 1
@@ -26,16 +24,16 @@ def getRepos(params={'q':'stars:>0'}, n=1000)->{Url}:  # !? stars:>=0
             urls.add(repoItem['clone_url'])
     return urls
 
-def doCommits(repos:{Url}, inLastYears=5, commitCharMax=5000,
-              rc:RepoCounter=SimpleNamespace(counter=Counter(), repos=set()))->RepoCounter:
+def doCommits(repoUrls, inLastYears=5, commitCharMax=5000,
+              rc:RepoCounter=SimpleNamespace(counter=Counter(), repoUrls=set()))->RepoCounter:
     rc = copy(rc)
     since = date.today()-timedelta(365*inLastYears)
-    repos = set(repos)-rc.repos
-    for repo in repos:
-        print(repo, ': processing..')
-        rc.repos.add(repo)
+    repoUrls = set(repoUrls)-rc.repoUrls
+    for repoUrl in repoUrls:
+        print(repoUrl, ': processing..')
+        rc.repoUrls.add(repoUrl)
         with TemporaryDirectory() as fp:
-            shell(f"git clone {repo} {fp} --shallow-since={since} --shallow-submodules")
+            shell(f"git clone {repoUrl} {fp} --shallow-since={since} --shallow-submodules")
             commitHashes = shell(f"git -C {fp} log --pretty=format:%H").split()[:-1]
             assert len(commitHashes) != 0
             for commitHash in commitHashes:
@@ -51,5 +49,5 @@ def doCommits(repos:{Url}, inLastYears=5, commitCharMax=5000,
     return rc
 
 def main(params={'q':'stars:>0'}, n=1000, inLastYears=5, commitCharMax=5000,
-         rc:RepoCounter=SimpleNamespace(counter=Counter(), repos=set()))->RepoCounter:
+         rc:RepoCounter=SimpleNamespace(counter=Counter(), repoUrls=set()))->RepoCounter:
     return doCommits(getRepos(params, n), inLastYears, commitCharMax, rc)
