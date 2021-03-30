@@ -23,10 +23,10 @@ def getRepos(params={'q':'stars:>0'}, n=1000)->{'RepoUrl'}:  # !? stars:>=0 # no
         for repoItem in rjson['items']: urls.add(repoItem['clone_url'])
     return urls
 
-def doCommits(repoUrls, inLastYears=5, commitCharMax=5000,
+def doCommits(repoUrls, inLast_years=5, commitCharMax=5000,
               rc:RepoCounter=SimpleNamespace(counter=Counter(), repoUrls=set()))->RepoCounter:
     rc = copy(rc)
-    since = date.today()-timedelta(365*inLastYears)
+    since = date.today()-timedelta(365*inLast_years)
     repoUrls = set(repoUrls)-rc.repoUrls
     for repoUrl in repoUrls:
         print(repoUrl, ': processing..')
@@ -47,6 +47,6 @@ def doCommits(repoUrls, inLastYears=5, commitCharMax=5000,
         if c in (')',']','}','\n','\r','\t') or not c.isascii(): del rc.counter[c]
     return rc
 
-def main(params={'q':'stars:>0'}, n=1000, inLastYears=5, commitCharMax=5000,
+def main(params={'q':'stars:>0'}, n=1000, inLast_years=5, commitCharMax=5000,
          rc:RepoCounter=SimpleNamespace(counter=Counter(), repoUrls=set()))->RepoCounter:
-    return doCommits(getRepos(params, n), inLastYears, commitCharMax, rc)
+    return doCommits(getRepos(params, n), inLast_years, commitCharMax, rc)
