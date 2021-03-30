@@ -20,8 +20,7 @@ def getRepos(params={'q':'stars:>0'}, n=1000)->{'RepoUrl'}:  # !? stars:>=0 # no
     urls = set()
     for page in range(1, npages+1):
         rjson = requests.get('https://api.github.com/search/repositories', {'per_page':perPage,'page':page,**params}).json()
-        for repoItem in rjson['items']:
-            urls.add(repoItem['clone_url'])
+        for repoItem in rjson['items']: urls.add(repoItem['clone_url'])
     return urls
 
 def doCommits(repoUrls, inLastYears=5, commitCharMax=5000,
