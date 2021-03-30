@@ -1,5 +1,6 @@
 import subprocess
 from collections import Counter
+from copy import deepcopy as copy
 from datetime import date, timedelta
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
@@ -25,8 +26,9 @@ def getRepos(params={'q':'stars:>0'}, n=1000)->{Url}:  # !? stars:>=0
             urls.add(repoItem['clone_url'])
     return urls
 
-def doCommits(repos:{Url}, inLastYears=5, commitCharMax=5000, rc:RepoCounter=None)->RepoCounter:
-    if rc is None: rc = SimpleNamespace(counter=Counter(), repos=set())
+def doCommits(repos:{Url}, inLastYears=5, commitCharMax=5000,
+              rc:RepoCounter=SimpleNamespace(counter=Counter(), repos=set()))->RepoCounter:
+    rc = copy(rc)
     since = date.today()-timedelta(365*inLastYears)
     repos = set(repos)-rc.repos
     for repo in repos:
@@ -48,5 +50,6 @@ def doCommits(repos:{Url}, inLastYears=5, commitCharMax=5000, rc:RepoCounter=Non
         if c in (')',']','}','\n','\r','\t') or not c.isascii(): del rc.counter[c]
     return rc
 
-def main(params={'q':'stars:>0'}, n=1000, inLastYears=5, commitCharMax=5000, rc:RepoCounter=None)->RepoCounter:
+def main(params={'q':'stars:>0'}, n=1000, inLastYears=5, commitCharMax=5000,
+         rc:RepoCounter=SimpleNamespace(counter=Counter(), repos=set()))->RepoCounter:
     return doCommits(getRepos(params, n), inLastYears, commitCharMax, rc)
