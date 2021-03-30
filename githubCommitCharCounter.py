@@ -23,7 +23,7 @@ def getRepos(params={'q':'stars:>0'}, n=1000)->{'RepoUrl'}:  # !? stars:>=0 # no
         for repoItem in rjson['items']: urls.add(repoItem['clone_url'])
     return urls
 
-def doCommits(repoUrls, inLast_years=5, commitCharMax=5000,
+def doCommits(repoUrls, inLast_years=5.0, commitCharMax=5000,
               rc:RepoCounter=SimpleNamespace(counter=Counter(), repoUrls=set()))->RepoCounter:
     rc = copy(rc)
     since = date.today()-timedelta(365*inLast_years)
