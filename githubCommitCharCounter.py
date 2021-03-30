@@ -13,13 +13,13 @@ RepoCounter = tuple[Counter['Char'], {'RepoUrl'}]  # tuple=SimpleNamespace
 
 def shell(s:str): return subprocess.run(s, capture_output=True, check=True, shell=True, text=True).stdout
 
-def getRepos(params={'q':'stars:>0'}, n=1000)->{'RepoUrl'}:  # !? stars:>=0 # noqa
+def getRepos(params={'q':'stars:>0'}, n=1000)->{'RepoUrl'}:  #!? stars:>=0 # noqa
     assert n<=1000
     perPage = min(100, n)
     npages = n//100 or 1
     urls = set()
     for page in range(1, npages+1):
-        rjson = requests.get('https://api.github.com/search/repositories', {'per_page':perPage,'page':page,**params}).json()
+        rjson = requests.get('https://api.github.com/search/repositories', {'per_page':perPage, 'page':page, **params}).json()
         for repoItem in rjson['items']: urls.add(repoItem['clone_url'])
     return urls
 
