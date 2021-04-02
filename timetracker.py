@@ -19,7 +19,6 @@ def main():
             if data["work_hours"].setdefault(year, {}).setdefault(week, [0, 0, 0, 0, 0, 0, 0])[day-1]==0:
                 data["day_start"] = cp(currentTime)
                 data['timestamps'] = data['timestamps'][-20:]  #/
-                print('Day start:', data['day_start'])
         else:
             currentWork = (currentTime-data["tracking_start"]).total_seconds()/3600
             data["work_hours"][year][week][day-1] += currentWork
