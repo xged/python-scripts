@@ -24,8 +24,8 @@ def main():
             data["work_hours"][year][week][day-1] += currentWork
             hoursPassed = (currentTime-data["day_start"]).total_seconds()/3600+PREDICTION_BUFFER
             dayLength = DAY_END-data["day_start"].hour-data["day_start"].minute/60+PREDICTION_BUFFER
-            dayPrediction = dayLength * (data["work_hours"][year][week][day-1])/hoursPassed
-            if day == 1: weekAvg = (sum(data["work_hours"][year][week-1]))/7
+            dayPrediction = dayLength*(data["work_hours"][year][week][day-1])/hoursPassed
+            if day==1: weekAvg = (sum(data["work_hours"][year][week-1]))/7
             else: weekAvg = (sum(data["work_hours"][year][week][:day-1]))/(day-1)
             weekprediction = (sum(data["work_hours"][year][week][:day-1])+dayPrediction)/day
             data["timestamps"].append((data["tracking_start"], currentTime))
