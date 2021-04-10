@@ -1,6 +1,5 @@
 import os
 import pickle
-from copy import deepcopy as cp
 from datetime import datetime
 
 fp = '/home/xged/src/python-scripts/.timetracker.pickle'
@@ -17,7 +16,7 @@ def main():
             data['tracking_start'] = currentTime
             print('Started Tracking..')
         if data['work_hours'].setdefault(year, {}).setdefault(week, [0, 0, 0, 0, 0, 0, 0])[day-1]==0 and data['tracking_start'] is None:  # hack
-            data['day_start'] = cp(currentTime)
+            data['day_start'] = currentTime
             data['timestamps'] = data['timestamps'][-20:]
         else:
             currentWork = (currentTime-data['tracking_start']).total_seconds()/3600
