@@ -12,12 +12,12 @@ def main():
     year, week, day = datetime.isocalendar(currentTime)
     with open(fp, 'rb+') as f:
         data = pickle.load(f)
-        if data['tracking_start'] is None:
-            data['tracking_start'] = currentTime
-            print('Started Tracking..')
         if data['work_hours'].setdefault(year, {}).setdefault(week, [0, 0, 0, 0, 0, 0, 0])[day-1]==0 and data['tracking_start'] is None:  # hack
             data['day_start'] = currentTime
             data['timestamps'] = data['timestamps'][-20:]
+        if data['tracking_start'] is None:
+            data['tracking_start'] = currentTime
+            print('Started Tracking..')
         else:
             currentWork = (currentTime-data['tracking_start']).total_seconds()/3600
             data['work_hours'][year][week][day-1] += currentWork
